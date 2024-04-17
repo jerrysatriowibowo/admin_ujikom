@@ -44,7 +44,7 @@
         </sidenav-item>
       </li>
       <li class="nav-item">
-        <sidenav-item url="/template" :class="getRoute() === 'template' ? 'active' : ''"
+        <sidenav-item url="/manage-akun" :class="getRoute() === 'manage-akun' ? 'active' : ''"
           :navText="this.$store.state.isRTL ? 'اشتراك' : 'Manage Akun'">
           <template v-slot:icon>
             <i class="ni ni-collection text-info text-sm opacity-10"></i>

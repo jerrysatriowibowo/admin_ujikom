@@ -12,24 +12,21 @@
         <span class="input-group-text" id="addon-wrapping">
           <img src="https://cdn-icons-png.flaticon.com/128/3406/3406828.png" alt="User Icon" width="28" height="28">
         </span>
-        <select v-model="newTemplate.id_kategori" class="form-select" id="inputGroupSelect03"
-          aria-label="Example select with button addon">
-          <option v-for="kat in getKat" :key="kat.id" :value="kat.id">{{ kat.kategori }}</option>
+        <select v-model="newTemplate.id_categori" class="form-select" id="inputGroupSelect03" aria-label="Example select with button addon">
+          <option v-for="kat in getCat" :key="kat.id" :value="kat.title">{{ kat.title }}</option>
         </select>
       </div>
       <div class="input-group flex-nowrap mb-3">
         <span class="input-group-text" id="addon-wrapping">
           <img src="https://cdn-icons-png.flaticon.com/128/8089/8089953.png" alt="User Icon" width="28" height="28">
         </span>
-        <input v-model="newTemplate.title" type="text" class="form-control" placeholder="Judul" aria-label="Username"
-          aria-describedby="addon-wrapping">
+        <input v-model="newTemplate.title" type="text" class="form-control" placeholder="Judul" aria-label="Username" aria-describedby="addon-wrapping">
       </div>
       <div class="input-group flex-nowrap mb-3">
         <span class="input-group-text" id="addon-wrapping">
           <img src="https://cdn-icons-png.flaticon.com/128/1375/1375106.png" alt="User Icon" width="28" height="28">
         </span>
-        <input v-on:change="handleImageUpload" type="file" class="form-control" aria-label="Gambar"
-          aria-describedby="addon-wrapping" accept="image/*">
+        <input v-on:change="handleImageUpload" type="file" class="form-control" aria-label="Image" aria-describedby="addon-wrapping" accept="image/*">
       </div>
       <div class="input-group flex-nowrap mb-3">
         <span class="input-group-text" id="addon-wrapping">
@@ -42,33 +39,32 @@
         <span class="input-group-text" id="addon-wrapping">
           <img src="https://cdn-icons-png.flaticon.com/128/9948/9948547.png" alt="User Icon" width="28" height="28">
         </span>
-        <textarea v-model="newTemplate.source" class="form-control" placeholder="Source"
-          aria-label="With textarea"></textarea>
+        <textarea v-model="newTemplate.source" class="form-control" placeholder="Link" aria-label="With textarea"></textarea>
       </div>
       <div class="input-group-prepend">
-        <button type="button" class="btn btn-primary btn-lg w-100" @click="showCreateDonasiModal">Buat Donasi</button>
+        <button type="button" class="btn btn-primary btn-lg w-100" @click="showCreateTemplateModal">Buat Template</button>
       </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="createDonasiModal" tabindex="-1" aria-labelledby="createDonasiModalLabel"
+    <div class="modal fade" id="createTemplateModal" tabindex="-1" aria-labelledby="createTemplateModalLabel"
       aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="createDonasiModalLabel">Tambah Donasi</h5>
+            <h5 class="modal-title" id="createTemplateModalLabel">Tambah Template</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="text-center mb-4">
               <img
                 src="https://img.freepik.com/free-vector/toggle-concept-illustration_114360-8900.jpg?size=626&ext=jpg&ga=GA1.1.1081581823.1690350210&semt=ais"
-                alt="Donasi Image" class="img-fluid" style="max-height: 200px;">
+                alt="Template Image" class="img-fluid" style="max-height: 200px;">
             </div>
-            <h5>Apakah Anda Yakin Ingin Membuat Data Donasi?</h5>
+            <h5>Apakah Anda Yakin Ingin Membuat Data Template?</h5>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="button" class="btn btn-success" @click="createDonasi">Tambah</button>
+            <button type="button" class="btn btn-success" @click="createTemplate">Tambah</button>
           </div>
         </div>
       </div>
@@ -86,32 +82,32 @@ export default {
   data() {
     return {
       newTemplate: {
+        id_categori: '',
         title: '',
         image: null,
         des: '',
-        id_kategori: '',
         source: '',
       },
     };
   },
   computed: {
-    ...mapGetters('kategori', ['getKat']),
+    ...mapGetters('categori', ['getCat']),
   },
   methods: {
-    ...mapActions('kategori', ['fetchKat']),
-    ...mapActions('donasi', ['addDonasi']),
+    ...mapActions('categori', ['fetchCat']),
+    ...mapActions('template', ['addTemplate']),
     handleImageUpload(event) {
       const file = event.target.files[0];
       this.newTemplate.image = file;
     },
-    showCreateDonasiModal() {
-      new bootstrap.Modal(document.getElementById('createDonasiModal')).show();
+    showCreateTemplateModal() {
+      new bootstrap.Modal(document.getElementById('createTemplateModal')).show();
     },
-    async createDonasi() {
+    async createTemplate() {
       const missingFields = [];
-      if (!this.newTemplate.id_kategori) missingFields.push('Kategori');
+      if (!this.newTemplate.id_categori) missingFields.push('Kategori');
       if (!this.newTemplate.title) missingFields.push('Judul');
-      if (!this.newTemplate.image) missingFields.push('Gambar');
+      if (!this.newTemplate.image) missingFields.push('Image');
       if (!this.newTemplate.des) missingFields.push('Deskripsi');
       if (!this.newTemplate.source) missingFields.push('Link');
 
@@ -124,27 +120,27 @@ export default {
         });
         return;
       }
-      const addedDonation = await this.$store.dispatch('donasi/addDonasi', {
+      const addedTemplate = await this.$store.dispatch('template/addTemplate', {
         userInput: this.newTemplate,
       });
 
-      if (addedDonation.success) {
+      if (addedTemplate.success) {
         Swal.fire({
           position: 'top',
           icon: 'success',
-          title: 'Data donasi kamu berhasil ditambahkan!',
+          title: 'Data template berhasil ditambahkan!',
           showConfirmButton: false,
           timer: 3000,
         });
 
         this.$router.go(0);
       } else {
-        console.error('Gagal menambahkan donasi:', addedDonation.error);
+        console.error('Gagal menambahkan template:', addedTemplate.error);
       }
     },
   },
   mounted() {
-    this.fetchKat();
+    this.fetchCat();
   },
 };
 </script>

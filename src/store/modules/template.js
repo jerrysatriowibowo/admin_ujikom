@@ -11,7 +11,7 @@ const template = {
     getTemplate: (state) => state.templateData,
   },
   actions: {
-    async fetchKategori({ commit }) {
+    async fetchTemplate({ commit }) {
       try {
         const data = await axios.get(
           "http://localhost:8080/api/v1/template"
@@ -24,20 +24,21 @@ const template = {
     },
     async addTemplate({ commit }, { userInput }) {
       try {
-        const { id_kategori, title, image, des, source } = userInput;
+        const { id_categori, title, image, des, source } = userInput;
         const token = localStorage.getItem("token");
         const decodedToken = jwt.decode(token);
     
         if (decodedToken && decodedToken.id) {
           const formData = new FormData();
-          formData.append('id_kategori', id_kategori);
+          formData.append('id_categori', id_categori);
           formData.append('title', title);
           formData.append('image', image);
           formData.append('des', des);
           formData.append('source', source);
-          formData.append('id_user', decodedToken.id_user);
+          formData.append('id_user', decodedToken.id);
     
-          const response = await axios.post('http://localhost:8080/api/v1/template', formData, {
+          const response = await axios.post('http://localhost:8080/api/v1/template', formData, 
+          {
             headers: {
               'Authorization': `Bearer ${token}`, 
               'Content-Type': 'multipart/form-data',
@@ -53,32 +54,36 @@ const template = {
           console.error('Error: Unable to decode token or missing id_user');
         }
       } catch (error) {
-        console.error('Error add donation:', error);
+        console.error('Error add template:', error);
         throw error;
       }
     },    
     async hapusTemplate({ dispatch }, templateId) {
       try {
+        const token = localStorage.getItem("token");
         const response = await axios.delete(
           `http://localhost:8080/api/v1/template/${templateId}`,
           {
-            id: templateId,
+            headers: {
+              'Authorization': `Bearer ${token}`, 
+              id: templateId,
+            }
           },
         );
         console.log(response.data.message);
-        dispatch("fetchDonasi");
+        dispatch("fetchTemplate");
       } catch (error) {
-        alert("Error removing item from donasi");
+        alert("Error removing item from template");
         console.log(error);
       }
     },
     async editTemplate({ commit }, { templateId, userInput }) {
-      console.log('Editing templates with ID:', templateId);
       try {
-        const { id_kategori, title, image, des, source } = userInput;
+        const token = localStorage.getItem("token");
+        const { id_categori, title, image, des, source } = userInput;
     
         const dataToUpdate = new FormData();
-        dataToUpdate.append('id_kategori', id_kategori);
+        dataToUpdate.append('id_categori', id_categori);
         dataToUpdate.append('title', title);
         dataToUpdate.append('des', des);
         dataToUpdate.append('source', source);
@@ -87,8 +92,14 @@ const template = {
           dataToUpdate.append('image', image);
         }
     
-        const response = await axios.put(`http://localhost:8080/api/v1/template/${templateId}`, dataToUpdate);
-    
+        const response = await axios.put(`http://localhost:8080/api/v1/template/${templateId}`, dataToUpdate, 
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`, 
+              'Content-Type': 'multipart/form-data',
+            }
+          }
+        );
         if (response.data.success) {
           commit('SET_UPDATE', { templateId, updatedTemplate: dataToUpdate });
         }

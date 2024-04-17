@@ -4,6 +4,7 @@ import Tabel from "../views/Tables.vue";
 import Template from "../views/Billing.vue";
 import Profile from "../views/Profile.vue";
 import Login from "../views/Signin.vue";
+import ManageAkun from "../views/ManageAkun.vue";
 import store from "../store";
 
 const merk = 'PreMu';
@@ -18,31 +19,37 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
-    meta: { title: merk + ' | ' + 'Beranda', requiresLogin: true},
+    meta: { title: merk + ' | ' + 'Beranda', requiresLogin: true },
   },
   {
     path: "/tabel",
     name: "Tabel",
     component: Tabel,
-    meta: { title: merk + ' | ' + 'Tabel', requiresLogin: true},
+    meta: { title: merk + ' | ' + 'Tabel', requiresLogin: true },
   },
   {
     path: "/template",
     name: "Template",
     component: Template,
-    meta: { title: merk + ' | ' + 'Template', requiresLogin: true},
+    meta: { title: merk + ' | ' + 'Template', requiresLogin: true },
   },
   {
     path: "/profil",
     name: "Profil",
     component: Profile,
-    meta: { title: merk + ' | ' + 'Profil'},
+    meta: { title: merk + ' | ' + 'Profil', requiresLogin: true },
   },
   {
     path: "/login",
     name: "Login",
     component: Login,
-    meta: { title: merk + ' | ' + 'Login' , requiresGuest: true},
+    meta: { title: merk + ' | ' + 'Login', requiresGuest: true },
+  },
+  {
+    path: "/manage-akun",
+    name: "ManageAkun",
+    component: ManageAkun,
+    meta: { title: merk + ' | ' + 'Manage Akun', requiresLogin: true },
   },
 ];
 
@@ -54,17 +61,17 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresGuest && store.getters["auth/isAuthenticated"]) {
-      next("/dashboard");
-  } else{
-      next();
+    next("/dashboard");
+  } else {
+    next();
   }
 });
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresLogin && !store.getters["auth/isAuthenticated"]) {
     next("/login");
-  } else{
-      next();
+  } else {
+    next();
   }
 
   if (to.meta.title) {
